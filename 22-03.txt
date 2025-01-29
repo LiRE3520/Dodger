@@ -1,0 +1,139 @@
+Imports System.Console
+Module Program
+    Sub Main()
+        SetWindowSize(52, 26)
+        CursorVisible = False
+        BackgroundColor = ConsoleColor.Black
+        ForegroundColor = ConsoleColor.Red
+        Clear()
+        WriteLine("________________________________________________
+___  __ \_  __ \__  __ \_  ____/__  ____/__  __ \
+__  / / /  / / /_  / / /  / __ __  __/  __  /_/ /
+_  /_/ // /_/ /_  /_/ // /_/ / _  /___  _  _, _/
+/_____/ \____/ /_____/ \____/  /_____/  /_/ |_|
+")
+        Dim choice As Integer
+        choice = Menu()
+        Do Until choice = 1
+            Clear()
+            Play()
+            choice = Menu()
+        Loop
+    End Sub
+    Function Menu() As Integer
+        Dim Pos As Integer
+        Dim Key As ConsoleKey
+        WriteLine("   Play")
+        WriteLine("   Exit")
+        Do
+            SetCursorPosition(0, Pos + 6)
+            Write("->")
+            Key = ReadKey().Key
+            SetCursorPosition(0, Pos + 6)
+            Write("  ")
+            Select Case Key
+                Case ConsoleKey.UpArrow
+                    If Pos > 0 Then Pos -= 1
+                Case ConsoleKey.DownArrow
+                    If Pos < 1 Then Pos += 1
+            End Select
+        Loop Until Key = ConsoleKey.Enter
+        Return Pos
+    End Function
+    Sub Play()
+        CursorVisible = False
+        Dim keypressed As ConsoleKeyInfo
+        Dim sPos As Integer = 25
+        Dim aPos As Integer
+        Dim Direction As Integer
+        Dim i As Integer = 1
+        Dim endGame As Boolean = False
+        Dim score As Integer = 0
+        SetCursorPosition(sPos, 25)
+        Write("☻")
+        Do
+            Randomize()
+            aPos = Rnd() * 49
+            SetCursorPosition(aPos, 0) : Write("►█◄")
+            Do
+                Threading.Thread.Sleep(30)
+                Randomize()
+                Direction = Rnd() * 2
+                Select Case Direction
+                    Case 0
+                        If aPos > 2 Then
+                            aPos -= 3
+                            SetCursorPosition(aPos, i) : Write("►█◄")
+                            SetCursorPosition(aPos + 3, i - 1) : Write("   ")
+                        Else
+                            i -= 1
+                        End If
+                    Case 1
+                        SetCursorPosition(aPos, i) : Write("►█◄")
+                        SetCursorPosition(aPos, i - 1) : Write("   ")
+                    Case 2
+                        If aPos < 47 Then
+                            aPos += 3
+                            SetCursorPosition(aPos, i) : Write("►█◄")
+                            SetCursorPosition(aPos - 3, i - 1) : Write("   ")
+                        Else
+                            i -= 1
+                        End If
+                End Select
+                If (aPos - 3 = sPos Or aPos - 2 = sPos Or aPos - 1 = sPos Or aPos = sPos Or aPos + 1 = sPos Or aPos + 2 = sPos Or aPos + 3 = sPos Or aPos + 4 = sPos Or aPos + 5 = sPos) And i = 25 Then
+                    endGame = True
+                Else
+                    score += 1
+                End If
+                SpaceshipMovement(keypressed, sPos)
+                i += 1
+            Loop Until i = 26
+            If endGame = False Then
+                SetCursorPosition(aPos, i - 1) : Write("   ")
+            End If
+            i = 1
+        Loop Until endGame = True
+        Death(score, aPos)
+    End Sub
+    Sub SpaceshipMovement(ByRef keypressed As ConsoleKeyInfo, ByRef sPos As Integer)
+        If KeyAvailable() = True Then
+            keypressed = ReadKey()
+            If keypressed.Key = ConsoleKey.LeftArrow And sPos > 0 Then
+                SetCursorPosition(sPos, 25)
+                Write(" ")
+                sPos -= 5
+            ElseIf keypressed.Key = ConsoleKey.RightArrow And sPos < 50 Then
+                SetCursorPosition(sPos, 25)
+                Write(" ")
+                sPos += 5
+            Else
+                SetCursorPosition(sPos + 1, 25)
+                Write(" ")
+            End If
+            SetCursorPosition(sPos, 25)
+            Write("☻")
+        End If
+    End Sub
+    Sub Death(score As Integer, aPos As Integer)
+        BackgroundColor = ConsoleColor.White
+        For x = 0 To 10
+            If (aPos - x) > 0 Then SetCursorPosition(aPos - x, 25) : Write(" ")
+            If (aPos + x) < 51 Then SetCursorPosition(aPos + x, 25) : Write(" ")
+            If (aPos - (x / 2)) > 0 Then SetCursorPosition(aPos - (x / 2), 24) : Write(" ")
+            If (aPos + (x / 2)) < 51 Then SetCursorPosition(aPos + (x / 2), 24) : Write(" ")
+            If (aPos - (x / 4)) > 0 Then SetCursorPosition(aPos - (x / 4), 23) : Write(" ")
+            If (aPos + (x / 4)) < 51 Then SetCursorPosition(aPos + (x / 4), 23) : Write(" ")
+            If (aPos - (x / 8)) > 0 Then SetCursorPosition(aPos - (x / 8), 22) : Write(" ")
+            If (aPos + (x / 8)) < 51 Then SetCursorPosition(aPos + (x / 8), 22) : Write(" ")
+            Threading.Thread.Sleep(100)
+        Next
+        BackgroundColor = ConsoleColor.Black
+        Threading.Thread.Sleep(500)
+        SetCursorPosition(0, 0) : WriteLine("__  __                 _____________     _________
+_ \/ /_________  __    ______  /__(_)__________  /
+__  /_  __ \  / / /    _  __  /__  /_  _ \  __  /
+_  / / /_/ / /_/ /     / /_/ / _  / /  __/ /_/ /  
+/_/  \____/\__,_/      \__,_/  /_/  \___/\__,_/ 
+")
+    End Sub
+End Module

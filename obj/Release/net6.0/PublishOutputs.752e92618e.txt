@@ -1,0 +1,5 @@
+C:\Users\techg\Desktop\Dodger.exe
+C:\Users\techg\Desktop\Dodger.dll
+C:\Users\techg\Desktop\Dodger.deps.json
+C:\Users\techg\Desktop\Dodger.runtimeconfig.json
+C:\Users\techg\Desktop\Dodger.pdb
